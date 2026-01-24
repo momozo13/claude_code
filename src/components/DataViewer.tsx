@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SubscriptionData } from '../types';
 import { format } from 'date-fns';
 
@@ -11,6 +11,13 @@ interface DataViewerProps {
 export const DataViewer: React.FC<DataViewerProps> = ({ data, isOpen, onClose }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 50;
+
+  // モーダルが開いたときにページを1にリセット
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentPage(1);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -76,8 +83,14 @@ export const DataViewer: React.FC<DataViewerProps> = ({ data, isOpen, onClose })
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-7xl w-full max-h-[90vh] flex flex-col">
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-2xl shadow-2xl max-w-7xl w-full max-h-[90vh] flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div>
@@ -135,7 +148,28 @@ export const DataViewer: React.FC<DataViewerProps> = ({ data, isOpen, onClose })
 
         {/* Table */}
         <div className="flex-1 overflow-auto p-6">
-          <table className="w-full text-sm">
+          {data.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12">
+              <svg
+                className="w-16 h-16 text-gray-300 mb-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                />
+              </svg>
+              <p className="text-gray-500 text-lg font-medium">データがありません</p>
+              <p className="text-gray-400 text-sm mt-2">
+                フィルター条件を変更してください
+              </p>
+            </div>
+          ) : (
+            <table className="w-full text-sm">
             <thead className="bg-gray-50 sticky top-0">
               <tr>
                 <th className="px-4 py-3 text-left font-semibold text-gray-700 border-b-2 border-gray-200">
@@ -214,9 +248,11 @@ export const DataViewer: React.FC<DataViewerProps> = ({ data, isOpen, onClose })
               ))}
             </tbody>
           </table>
+          )}
         </div>
 
         {/* Pagination */}
+        {data.length > 0 && (
         <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
           <p className="text-sm text-gray-600">
             {startIndex + 1} - {Math.min(endIndex, data.length)} / {data.length} 件
@@ -243,6 +279,7 @@ export const DataViewer: React.FC<DataViewerProps> = ({ data, isOpen, onClose })
             </button>
           </div>
         </div>
+        )}
       </div>
     </div>
   );
