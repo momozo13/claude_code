@@ -20,12 +20,14 @@ export const DataViewer: React.FC<DataViewerProps> = ({ data, isOpen, onClose })
     }
   }, [isOpen, data.length]);
 
+  console.log('DataViewer render check', { isOpen, dataLength: data.length });
+
   if (!isOpen) {
-    console.log('DataViewer not open');
+    console.log('DataViewer not open - returning null');
     return null;
   }
 
-  console.log('DataViewer rendering', { isOpen, dataLength: data.length });
+  console.log('DataViewer rendering modal now!');
 
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -90,7 +92,8 @@ export const DataViewer: React.FC<DataViewerProps> = ({ data, isOpen, onClose })
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
+      style={{ zIndex: 9999 }}
       onClick={onClose}
     >
       <div
