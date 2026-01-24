@@ -1,6 +1,5 @@
 import { SubscriptionData, Filters, AggregatedMetrics, ChartDataPoint } from '../types';
 import { subDays, format, isAfter, isBefore } from 'date-fns';
-import { ALL_SUBSCRIPTION_DATA } from './dataGenerator';
 
 // フィルタに基づいて日付範囲を取得
 function getDateRangeFromFilter(dateRange: string): { start: Date; end: Date } {
@@ -46,7 +45,10 @@ export function filterData(data: SubscriptionData[], filters: Filters): Subscrip
 }
 
 // データを集計してメトリクスを計算
-export function aggregateMetrics(data: SubscriptionData[]): AggregatedMetrics {
+export function aggregateMetrics(
+  data: SubscriptionData[],
+  allData: SubscriptionData[]
+): AggregatedMetrics {
   if (data.length === 0) {
     return {
       totalActive: 0,
@@ -67,9 +69,9 @@ export function aggregateMetrics(data: SubscriptionData[]): AggregatedMetrics {
 
   // 前期間のデータを計算（同じ期間長だけ前）
   const periodLength = data.length;
-  const previousPeriodData = ALL_SUBSCRIPTION_DATA.slice(
-    Math.max(0, ALL_SUBSCRIPTION_DATA.length - periodLength * 2),
-    ALL_SUBSCRIPTION_DATA.length - periodLength
+  const previousPeriodData = allData.slice(
+    Math.max(0, allData.length - periodLength * 2),
+    allData.length - periodLength
   );
 
   // 現在の期間の集計

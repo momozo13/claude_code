@@ -18,30 +18,47 @@ const BASE_METRICS = {
   },
 };
 
-// トレンド成長率 (日次)
-const GROWTH_RATE = 0.003;
+// ランダムシード値を保存（セッションごとに異なる）
+let randomSeed = Math.random();
 
-// ランダムな変動を追加
-function addRandomVariation(value: number, variation: number = 0.2): number {
+// セッションごとに異なる成長率を生成
+const getGrowthRate = (): number => {
+  return 0.002 + randomSeed * 0.003; // 0.002 ~ 0.005
+};
+
+// ランダムな変動を追加（より大きな変動幅）
+function addRandomVariation(value: number, variation: number = 0.3): number {
   return Math.round(value * (1 + (Math.random() - 0.5) * variation));
 }
 
-// 曜日効果 (週末は少し低め)
+// 曜日効果 (週末は少し低め) - ランダム性を追加
 function getDayOfWeekMultiplier(date: Date): number {
   const day = date.getDay();
-  if (day === 0 || day === 6) return 0.85; // 週末
-  if (day === 1) return 1.1; // 月曜日は少し多め
-  return 1.0;
+  const randomFactor = 0.95 + Math.random() * 0.1; // 0.95 ~ 1.05
+  if (day === 0 || day === 6) return (0.8 + Math.random() * 0.1) * randomFactor; // 週末
+  if (day === 1) return (1.05 + Math.random() * 0.1) * randomFactor; // 月曜日
+  return randomFactor;
 }
 
-// スパイクをランダムに発生させる (約5%の確率)
+// スパイクをランダムに発生させる（確率もランダム）
 function shouldAddSpike(): boolean {
-  return Math.random() < 0.05;
+  const spikeChance = 0.03 + randomSeed * 0.04; // 3% ~ 7%
+  return Math.random() < spikeChance;
 }
 
-// スパイクの倍率
+// スパイクの倍率（より広い範囲）
 function getSpikeMultiplier(): number {
-  return 1.5 + Math.random() * 1.0; // 1.5x ~ 2.5x
+  return 1.3 + Math.random() * 2.0; // 1.3x ~ 3.3x
+}
+
+// 初期アクティブサブスクリプション数をランダムに生成
+function getInitialActiveSubscriptions(): Record<string, number> {
+  return {
+    'iOS-monthly': Math.round(4000 + Math.random() * 2000), // 4000 ~ 6000
+    'iOS-annual': Math.round(1200 + Math.random() * 800), // 1200 ~ 2000
+    'Android-monthly': Math.round(6000 + Math.random() * 2500), // 6000 ~ 8500
+    'Android-annual': Math.round(1000 + Math.random() * 600), // 1000 ~ 1600
+  };
 }
 
 // 累積アクティブサブスクリプション数を計算
@@ -73,21 +90,20 @@ function calculateMRR(
 
 // データを生成
 export function generateSubscriptionData(days: number = 365): SubscriptionData[] {
+  // セッションごとに新しいランダムシードを生成
+  randomSeed = Math.random();
+
   const data: SubscriptionData[] = [];
   const today = new Date();
+  const growthRate = getGrowthRate();
 
   // 各プラットフォーム・プランタイプごとのアクティブサブスクリプション数を追跡
-  const activeTracker: Record<string, number> = {
-    'iOS-monthly': 5000,
-    'iOS-annual': 1500,
-    'Android-monthly': 7000,
-    'Android-annual': 1200,
-  };
+  const activeTracker = getInitialActiveSubscriptions();
 
   for (let i = days - 1; i >= 0; i--) {
     const date = subDays(today, i);
     const dayOfWeekMultiplier = getDayOfWeekMultiplier(date);
-    const growthMultiplier = 1 + GROWTH_RATE * (days - i);
+    const growthMultiplier = 1 + growthRate * (days - i);
     const hasSpike = shouldAddSpike();
     const spikeMultiplier = hasSpike ? getSpikeMultiplier() : 1;
 
@@ -203,5 +219,10 @@ export function generateSubscriptionData(days: number = 365): SubscriptionData[]
   return data;
 }
 
-// 全データを一度生成してキャッシュ
-export const ALL_SUBSCRIPTION_DATA = generateSubscriptionData(365);
+// データを再生成する関数
+export function regenerateData(): SubscriptionData[] {
+  return generateSubscriptionData(365);
+}
+
+// 初回のデータ生成（アプリ起動時に毎回異なるデータが生成される）
+export let ALL_SUBSCRIPTION_DATA = generateSubscriptionData(365);
