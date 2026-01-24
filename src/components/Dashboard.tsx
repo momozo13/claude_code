@@ -20,7 +20,13 @@ export const Dashboard: React.FC = () => {
   const [isDataViewerOpen, setIsDataViewerOpen] = useState(false);
 
   const handleRegenerateData = () => {
+    console.log('データを再生成中...');
     setSubscriptionData(regenerateData());
+  };
+
+  const handleOpenDataViewer = () => {
+    console.log('生データビューアを開く', { filteredDataLength: filteredData.length, isOpen: isDataViewerOpen });
+    setIsDataViewerOpen(true);
   };
 
   // フィルタリングされたデータ
@@ -67,7 +73,7 @@ export const Dashboard: React.FC = () => {
           </div>
           <div className="flex gap-3">
             <button
-              onClick={() => setIsDataViewerOpen(true)}
+              onClick={handleOpenDataViewer}
               className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium shadow-sm"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

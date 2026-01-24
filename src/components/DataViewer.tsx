@@ -15,11 +15,17 @@ export const DataViewer: React.FC<DataViewerProps> = ({ data, isOpen, onClose })
   // モーダルが開いたときにページを1にリセット
   useEffect(() => {
     if (isOpen) {
+      console.log('DataViewer opened', { dataLength: data.length });
       setCurrentPage(1);
     }
-  }, [isOpen]);
+  }, [isOpen, data.length]);
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    console.log('DataViewer not open');
+    return null;
+  }
+
+  console.log('DataViewer rendering', { isOpen, dataLength: data.length });
 
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
