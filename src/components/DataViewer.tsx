@@ -46,11 +46,6 @@ export const DataViewer: React.FC<DataViewerProps> = ({ data, isOpen, onClose })
 
   console.log('DataViewer rendering modal now!');
 
-  // テスト用：ページ全体に赤い枠を表示
-  useEffect(() => {
-    console.log('DataViewer modal is now in the DOM');
-  }, []);
-
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
