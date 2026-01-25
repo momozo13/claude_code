@@ -17,12 +17,24 @@ export const DataViewer: React.FC<DataViewerProps> = ({ data, isOpen, onClose })
     onClose();
   };
 
-  // モーダルが開いたときにページを1にリセット
+  // モーダルが開いたときにページを1にリセット & bodyのスクロールを制御
   useEffect(() => {
     if (isOpen) {
       console.log('DataViewer opened', { dataLength: data.length });
       setCurrentPage(1);
+      // bodyのスクロールを無効化
+      document.body.style.overflow = 'hidden';
+      console.log('Body overflow set to hidden');
+    } else {
+      // モーダルが閉じたらスクロールを戻す
+      document.body.style.overflow = 'auto';
+      console.log('Body overflow set to auto');
     }
+
+    // クリーンアップ関数
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
   }, [isOpen, data.length]);
 
   console.log('DataViewer render check', { isOpen, dataLength: data.length });
@@ -33,6 +45,11 @@ export const DataViewer: React.FC<DataViewerProps> = ({ data, isOpen, onClose })
   }
 
   console.log('DataViewer rendering modal now!');
+
+  // テスト用：ページ全体に赤い枠を表示
+  useEffect(() => {
+    console.log('DataViewer modal is now in the DOM');
+  }, []);
 
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -96,13 +113,51 @@ export const DataViewer: React.FC<DataViewerProps> = ({ data, isOpen, onClose })
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
-      style={{ zIndex: 9999 }}
-      onClick={handleClose}
-    >
+    <>
+      {/* デバッグ用：画面全体を覆う赤い半透明のdiv */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(255, 0, 0, 0.3)',
+          zIndex: 9998,
+          pointerEvents: 'none'
+        }}
+      />
+      <div
+        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 9999,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '1rem'
+        }}
+        onClick={handleClose}
+      >
       <div
         className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[85vh] flex flex-col"
+        style={{
+          backgroundColor: 'white',
+          borderRadius: '1rem',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+          width: '100%',
+          maxWidth: '64rem',
+          maxHeight: '85vh',
+          display: 'flex',
+          flexDirection: 'column',
+          position: 'relative',
+          zIndex: 10000
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -296,5 +351,6 @@ export const DataViewer: React.FC<DataViewerProps> = ({ data, isOpen, onClose })
         )}
       </div>
     </div>
+    </>
   );
 };
