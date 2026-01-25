@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Filters } from './Filters';
 import { KPICard } from './KPICard';
 import { MetricChart } from './MetricChart';
@@ -19,24 +19,15 @@ export const Dashboard: React.FC = () => {
   );
   const [isDataViewerOpen, setIsDataViewerOpen] = useState(false);
 
-  // デバッグ用：状態変更を監視
-  useEffect(() => {
-    console.log('isDataViewerOpen changed:', isDataViewerOpen);
-  }, [isDataViewerOpen]);
-
   const handleRegenerateData = () => {
-    console.log('データを再生成中...');
     setSubscriptionData(regenerateData());
   };
 
   const handleOpenDataViewer = () => {
-    console.log('生データビューアを開く - BEFORE', { filteredDataLength: filteredData.length, isOpen: isDataViewerOpen });
     setIsDataViewerOpen(true);
-    console.log('setIsDataViewerOpen(true) called');
   };
 
   const handleCloseDataViewer = () => {
-    console.log('Dashboard - handleCloseDataViewer called');
     setIsDataViewerOpen(false);
   };
 
@@ -270,16 +261,11 @@ export const Dashboard: React.FC = () => {
       </div>
 
       {/* Data Viewer Modal */}
-      {(() => {
-        console.log('About to render DataViewer with isOpen:', isDataViewerOpen, 'dataLength:', filteredData.length);
-        return (
-          <DataViewer
-            data={filteredData}
-            isOpen={isDataViewerOpen}
-            onClose={handleCloseDataViewer}
-          />
-        );
-      })()}
+      <DataViewer
+        data={filteredData}
+        isOpen={isDataViewerOpen}
+        onClose={handleCloseDataViewer}
+      />
     </div>
   );
 };

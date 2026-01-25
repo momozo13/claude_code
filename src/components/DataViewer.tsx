@@ -13,38 +13,26 @@ export const DataViewer: React.FC<DataViewerProps> = ({ data, isOpen, onClose })
   const itemsPerPage = 50;
 
   const handleClose = () => {
-    console.log('DataViewer - handleClose called');
     onClose();
   };
 
   // モーダルが開いたときにページを1にリセット & bodyのスクロールを制御
   useEffect(() => {
     if (isOpen) {
-      console.log('DataViewer opened', { dataLength: data.length });
       setCurrentPage(1);
-      // bodyのスクロールを無効化
       document.body.style.overflow = 'hidden';
-      console.log('Body overflow set to hidden');
     } else {
-      // モーダルが閉じたらスクロールを戻す
       document.body.style.overflow = 'auto';
-      console.log('Body overflow set to auto');
     }
 
-    // クリーンアップ関数
     return () => {
       document.body.style.overflow = 'auto';
     };
   }, [isOpen, data.length]);
 
-  console.log('DataViewer render check', { isOpen, dataLength: data.length });
-
   if (!isOpen) {
-    console.log('DataViewer not open - returning null');
     return null;
   }
-
-  console.log('DataViewer rendering modal now!');
 
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -108,21 +96,7 @@ export const DataViewer: React.FC<DataViewerProps> = ({ data, isOpen, onClose })
   };
 
   return (
-    <>
-      {/* デバッグ用：画面全体を覆う赤い半透明のdiv */}
-      <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(255, 0, 0, 0.3)',
-          zIndex: 9998,
-          pointerEvents: 'none'
-        }}
-      />
-      <div
+    <div
         className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
         style={{
           position: 'fixed',
@@ -346,6 +320,5 @@ export const DataViewer: React.FC<DataViewerProps> = ({ data, isOpen, onClose })
         )}
       </div>
     </div>
-    </>
   );
 };
