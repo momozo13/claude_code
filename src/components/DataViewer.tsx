@@ -97,7 +97,7 @@ export const DataViewer: React.FC<DataViewerProps> = ({ data, isOpen, onClose })
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl shadow-2xl max-w-7xl w-full max-h-[90vh] flex flex-col"
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[85vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -156,7 +156,7 @@ export const DataViewer: React.FC<DataViewerProps> = ({ data, isOpen, onClose })
         </div>
 
         {/* Table */}
-        <div className="flex-1 overflow-auto p-6">
+        <div className="flex-1 overflow-x-auto overflow-y-auto p-6">
           {data.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12">
               <svg

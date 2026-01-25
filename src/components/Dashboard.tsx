@@ -26,7 +26,6 @@ export const Dashboard: React.FC = () => {
 
   const handleOpenDataViewer = () => {
     console.log('生データビューアを開く', { filteredDataLength: filteredData.length, isOpen: isDataViewerOpen });
-    alert('ボタンがクリックされました！モーダルを開きます。');
     setIsDataViewerOpen(true);
   };
 
