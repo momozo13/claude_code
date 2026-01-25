@@ -12,6 +12,11 @@ export const DataViewer: React.FC<DataViewerProps> = ({ data, isOpen, onClose })
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 50;
 
+  const handleClose = () => {
+    console.log('DataViewer - handleClose called');
+    onClose();
+  };
+
   // モーダルが開いたときにページを1にリセット
   useEffect(() => {
     if (isOpen) {
@@ -94,7 +99,7 @@ export const DataViewer: React.FC<DataViewerProps> = ({ data, isOpen, onClose })
     <div
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
       style={{ zIndex: 9999 }}
-      onClick={onClose}
+      onClick={handleClose}
     >
       <div
         className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[85vh] flex flex-col"
@@ -109,7 +114,7 @@ export const DataViewer: React.FC<DataViewerProps> = ({ data, isOpen, onClose })
             </p>
           </div>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

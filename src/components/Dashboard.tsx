@@ -33,10 +33,11 @@ export const Dashboard: React.FC = () => {
     console.log('生データビューアを開く - BEFORE', { filteredDataLength: filteredData.length, isOpen: isDataViewerOpen });
     setIsDataViewerOpen(true);
     console.log('setIsDataViewerOpen(true) called');
-    // 次のレンダリングで状態が更新されるため、ここではまだfalseのまま
-    setTimeout(() => {
-      console.log('生データビューアを開く - AFTER (next tick)', { isOpen: isDataViewerOpen });
-    }, 0);
+  };
+
+  const handleCloseDataViewer = () => {
+    console.log('Dashboard - handleCloseDataViewer called');
+    setIsDataViewerOpen(false);
   };
 
   // フィルタリングされたデータ
@@ -275,7 +276,7 @@ export const Dashboard: React.FC = () => {
           <DataViewer
             data={filteredData}
             isOpen={isDataViewerOpen}
-            onClose={() => setIsDataViewerOpen(false)}
+            onClose={handleCloseDataViewer}
           />
         );
       })()}
