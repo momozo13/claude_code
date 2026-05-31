@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>マリノスマネージャー 2025</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Header -->
+<header id="header">
+  <div class="logo">⚓ <span>Marinos</span> Manager</div>
+  <div class="header-stats">
+    <div class="header-stat">
+      <label>シーズン</label>
+      <strong id="season-display">2025</strong>
+    </div>
+    <div class="header-stat">
+      <label>週</label>
+      <strong id="week-display">第1週</strong>
+    </div>
+    <div class="header-stat">
+      <label>予算</label>
+      <strong id="budget-display">--億円</strong>
+    </div>
+    <div class="header-stat">
+      <label>順位</label>
+      <strong id="position-display">--位</strong>
+    </div>
+    <div class="header-stat">
+      <label>勝点</label>
+      <strong id="points-display">--pt</strong>
+    </div>
+    <div class="header-stat">
+      <label>名声</label>
+      <strong id="fame-display">--</strong>
+    </div>
+    <div class="header-stat">
+      <label>支持率</label>
+      <strong id="support-display">--%</strong>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button id="btn-advance-week">▶ 週を進める</button>
+    <button id="btn-save" class="btn">💾 保存</button>
+  </div>
+</header>
+
+<!-- Navigation -->
+<nav id="nav">
+  <button class="nav-btn active" data-tab="dashboard">🏠 ダッシュボード</button>
+  <button class="nav-btn" data-tab="squad">👥 スカッド</button>
+  <button class="nav-btn" data-tab="tactics">⚙️ 戦術</button>
+  <button class="nav-btn" data-tab="transfer">💰 移籍市場</button>
+  <button class="nav-btn" data-tab="finance">📊 財政</button>
+  <button class="nav-btn" data-tab="stadium">🏟️ スタジアム</button>
+  <button class="nav-btn" data-tab="league">🏆 リーグ</button>
+  <button class="nav-btn" data-tab="history">📜 歴史</button>
+</nav>
+
+<!-- App body -->
+<div id="app-body">
+  <main id="main-content">
+    <p style="color: var(--text-secondary); text-align: center; margin-top: 3rem;">読み込み中...</p>
+  </main>
+
+  <aside id="sidebar">
+    <h3>📢 通知</h3>
+    <div id="notifications-panel"></div>
+  </aside>
+</div>
+
+<!-- Modal -->
+<div id="modal" class="hidden">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2 id="modal-title">タイトル</h2>
+      <button class="modal-close-btn" id="modal-close">✕</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<!-- Scripts -->
+<script src="js/data.js"></script>
+<script src="js/game.js"></script>
+<script src="js/ui.js"></script>
+<script>
+  // Initialize or load saved game
+  const hasSave = Game.loadGame();
+  if (!hasSave) {
+    Game.init();
+  }
+  UI.init();
+</script>
+</body>
+</html>
