@@ -41,6 +41,17 @@ export type DayRecord = {
   note: string;
 };
 
+/** プレイヤー同士の関係（ライン） */
+export type LineKind = 'ally' | 'oppose';
+
+export type Line = {
+  id: string;
+  aId: string;
+  bId: string;
+  kind: LineKind;
+  note: string;
+};
+
 export type Game = {
   id: string;
   title: string;
@@ -54,6 +65,7 @@ export type Game = {
   players: Player[];
   days: DayRecord[];
   judgements: Judgement[];
+  lines: Line[];
   currentDay: number;
   freeNote: string;
   finished: boolean;

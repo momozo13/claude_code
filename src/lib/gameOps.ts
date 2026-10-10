@@ -36,6 +36,7 @@ export function createGame(input: {
     players,
     days: [emptyDay(1)],
     judgements: [],
+    lines: [],
     currentDay: 1,
     freeNote: '',
     finished: false,

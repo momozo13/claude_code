@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Game, Guess, Player, PlayerStatus } from '../types';
 import { useStore } from '../store';
 import { GUESS_LABEL, roleToGuess, ROLE_SUGGESTIONS } from '../lib/calc';
@@ -29,7 +29,15 @@ const STATUS_LABEL: Record<PlayerStatus, string> = {
   dead: '死亡',
 };
 
-export default function PlayerBoard({ game }: { game: Game }) {
+export default function PlayerBoard({
+  game,
+  selectedId,
+  onSelect,
+}: {
+  game: Game;
+  selectedId?: string;
+  onSelect: (id: string) => void;
+}) {
   const update = useStore((s) => s.update);
   const [newName, setNewName] = useState('');
   const patch = (id: string, p: Partial<Player>) => update((g) => updatePlayer(g, id, p));
@@ -37,7 +45,14 @@ export default function PlayerBoard({ game }: { game: Game }) {
   return (
     <div className="space-y-1.5">
       {game.players.map((p) => (
-        <PlayerRow key={p.id} game={game} player={p} onChange={(x) => patch(p.id, x)} />
+        <PlayerRow
+          key={p.id}
+          game={game}
+          player={p}
+          selected={p.id === selectedId}
+          onSelect={() => onSelect(p.id)}
+          onChange={(x) => patch(p.id, x)}
+        />
       ))}
       <datalist id="co-roles">
         {ROLE_SUGGESTIONS.map((r) => (
@@ -61,20 +76,44 @@ export default function PlayerBoard({ game }: { game: Game }) {
   );
 }
 
-function PlayerRow({ game, player: p, onChange }: { game: Game; player: Player; onChange: (p: Partial<Player>) => void }) {
+function PlayerRow({
+  game,
+  player: p,
+  selected,
+  onSelect,
+  onChange,
+}: {
+  game: Game;
+  player: Player;
+  selected: boolean;
+  onSelect: () => void;
+  onChange: (p: Partial<Player>) => void;
+}) {
   const isMe = p.id === game.myId;
   const dead = p.status !== 'alive';
   const nameOf = (id: string) => game.players.find((x) => x.id === id)?.name ?? '?';
   // この人が受けた判定
   const received = game.judgements.filter((j) => j.targetId === p.id);
   const actualGuess = p.actualRole ? roleToGuess(p.actualRole) : undefined;
+  const lines = game.lines.filter((l) => l.aId === p.id || l.bId === p.id);
+
+  // ショートカットで選んだら画面内に表示する
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (selected) ref.current?.scrollIntoView({ block: 'nearest' });
+  }, [selected]);
 
   return (
     <div
+      ref={ref}
+      data-player-id={p.id}
+      onMouseDown={onSelect}
+      onFocus={onSelect}
       className={[
         'rounded-md border border-l-4 border-slate-200 bg-white px-2 py-1.5 dark:border-slate-800 dark:bg-slate-900',
         ROW_ACCENT[p.guess],
         dead ? 'opacity-55' : '',
+        selected ? 'ring-2 ring-indigo-400' : '',
       ].join(' ')}
     >
       <div className="flex flex-wrap items-center gap-1.5">
@@ -100,6 +139,7 @@ function PlayerRow({ game, player: p, onChange }: { game: Game; player: Player; 
         <input
           className="input w-20 text-xs"
           list="co-roles"
+          data-field="co"
           placeholder="CO"
           value={p.co}
           onChange={(e) => onChange({ co: e.target.value })}
@@ -137,6 +177,19 @@ function PlayerRow({ game, player: p, onChange }: { game: Game; player: Player; 
             {j.day}日
           </span>
         ))}
+        {lines.map((l) => {
+          const other = l.aId === p.id ? l.bId : l.aId;
+          return (
+            <span
+              key={l.id}
+              title={l.note}
+              className={['rounded px-1 text-[11px]', l.kind === 'ally' ? 'bg-village/15 text-village' : 'bg-wolf/15 text-wolf'].join(' ')}
+            >
+              {l.kind === 'ally' ? '―' : '⇔'}
+              {nameOf(other)}
+            </span>
+          );
+        })}
         {p.actualRole && (
           <span
             className={[
@@ -150,6 +203,7 @@ function PlayerRow({ game, player: p, onChange }: { game: Game; player: Player; 
         )}
         <input
           className="input min-w-0 flex-1 text-xs"
+          data-field="note"
           placeholder="メモ"
           value={p.note}
           onChange={(e) => onChange({ note: e.target.value })}
