@@ -29,7 +29,16 @@ export const useStore = create<State>()(
           currentId: s.currentId === id ? undefined : s.currentId,
         })),
     }),
-    { name: 'wolf-notes', version: 1 },
+    {
+      name: 'wolf-notes',
+      version: 2,
+      // v1 → v2: ライン（lines）を追加
+      migrate: (persisted, version) => {
+        const s = persisted as State;
+        if (version < 2) s.games = s.games.map((g) => ({ ...g, lines: g.lines ?? [] }));
+        return s;
+      },
+    },
   ),
 );
 
