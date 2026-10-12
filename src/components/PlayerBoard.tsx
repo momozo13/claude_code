@@ -3,6 +3,7 @@ import type { Game, Guess, Player, PlayerStatus } from '../types';
 import { useStore } from '../store';
 import { GUESS_LABEL, roleToGuess, ROLE_SUGGESTIONS } from '../lib/calc';
 import { newPlayer, updatePlayer } from '../lib/gameOps';
+import ComboInput from './ComboInput';
 
 const GUESSES: Guess[] = ['village', 'wolf', 'madman', 'fox', 'unknown'];
 
@@ -54,11 +55,6 @@ export default function PlayerBoard({
           onChange={(x) => patch(p.id, x)}
         />
       ))}
-      <datalist id="co-roles">
-        {ROLE_SUGGESTIONS.map((r) => (
-          <option key={r} value={r} />
-        ))}
-      </datalist>
       <form
         className="flex gap-1 pt-1"
         onSubmit={(e) => {
@@ -136,13 +132,14 @@ function PlayerRow({
             </option>
           ))}
         </select>
-        <input
-          className="input w-20 text-xs"
-          list="co-roles"
+        <ComboInput
+          className="w-24"
+          inputClassName="text-xs"
+          options={ROLE_SUGGESTIONS}
           data-field="co"
           placeholder="CO"
           value={p.co}
-          onChange={(e) => onChange({ co: e.target.value })}
+          onChange={(co) => onChange({ co })}
         />
         <div className="flex gap-0.5">
           {GUESSES.map((g) => (

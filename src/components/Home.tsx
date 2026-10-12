@@ -3,6 +3,7 @@ import { useStore } from '../store';
 import { createGame } from '../lib/gameOps';
 import { parseParticipants } from '../lib/parseLog';
 import { guessAccuracy, ROLE_SUGGESTIONS } from '../lib/calc';
+import ComboInput from './ComboInput';
 
 const MY_NAME_KEY = 'wolf-notes:my-name';
 
@@ -73,7 +74,7 @@ export default function Home() {
           </label>
           <label>
             自分の役職
-            <input className="input mt-1 w-full" list="roles" value={myRole} onChange={(e) => setMyRole(e.target.value)} />
+            <ComboInput className="mt-1 w-full" options={ROLE_SUGGESTIONS} value={myRole} onChange={setMyRole} />
           </label>
           <label>
             配役 / 推定配役（任意）
@@ -95,11 +96,6 @@ export default function Home() {
             />
           </label>
         </div>
-        <datalist id="roles">
-          {ROLE_SUGGESTIONS.map((r) => (
-            <option key={r} value={r} />
-          ))}
-        </datalist>
         <button className="btn-primary" disabled={names.length < 2} onClick={start}>
           試合を開始
         </button>

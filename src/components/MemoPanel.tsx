@@ -1,6 +1,7 @@
 import type { Game } from '../types';
 import { useStore } from '../store';
 import { ROLE_SUGGESTIONS } from '../lib/calc';
+import ComboInput from './ComboInput';
 
 export default function MemoPanel({ game }: { game: Game }) {
   const update = useStore((s) => s.update);
@@ -15,7 +16,7 @@ export default function MemoPanel({ game }: { game: Game }) {
         </label>
         <label>
           自分の役職
-          <input className="input mt-1 w-full" list="memo-roles" value={game.myRole} onChange={(e) => set({ myRole: e.target.value })} />
+          <ComboInput className="mt-1 w-full" options={ROLE_SUGGESTIONS} value={game.myRole} onChange={(myRole) => set({ myRole })} />
         </label>
         <label>
           配役 / 推定配役
@@ -32,11 +33,6 @@ export default function MemoPanel({ game }: { game: Game }) {
           />
         </label>
       </div>
-      <datalist id="memo-roles">
-        {ROLE_SUGGESTIONS.map((r) => (
-          <option key={r} value={r} />
-        ))}
-      </datalist>
       <label className="block">
         自由メモ（内訳の仮定・ライン・考察など）
         <textarea
